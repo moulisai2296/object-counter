@@ -31,9 +31,6 @@ def prod_count_action() -> CountDetectedObjects:
                                     CountMongoDBRepo(host=mongo_host, port=mongo_port, database=mongo_db))
     elif data_store == 'PG':
         #Get PG connection params when data store is postgres DB
-        pg_host = os.getenv("PG_HOST")
-        pg_port = int(os.getenv("PG_PORT"))
-        pg_db = os.getenv("PG_DB")
         pg_host=os.getenv('PG_HOST')
         pg_port=int(os.getenv('PG_PORT'))
         pg_db=os.getenv('PG_DB')
