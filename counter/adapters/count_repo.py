@@ -53,4 +53,3 @@ class CountMongoDBRepo(ObjectCountRepo):
         counter_col = self.__get_counter_col()
         for value in new_values:
             counter_col.update_one({'object_class': value.object_class}, {'$inc': {'count': value.count}}, upsert=True)
-
