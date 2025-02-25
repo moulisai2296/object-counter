@@ -1,7 +1,7 @@
 from PIL import Image
 
 from counter.debug import draw
-from counter.domain.models import CountResponse
+from counter.domain.models import CountResponse, CountTotalResponse
 from counter.domain.ports import ObjectDetector, ObjectCountRepo
 from counter.domain.predictions import over_threshold, count
 
@@ -14,17 +14,22 @@ class CountDetectedObjects:
     def execute(self, image, threshold) -> CountResponse:
         predictions = self.__find_valid_predictions(image, threshold)
         object_counts = count(predictions)
-        print(object_counts)
         self.__object_count_repo.update_values(object_counts)
         total_objects = self.__object_count_repo.read_values()
         return CountResponse(current_objects=object_counts, total_objects=total_objects)
 
+    def get_objects(self, object_class) -> CountTotalResponse:
+        if object_class:
+            object_class = object_class.split(',')
+            total_objects = self.__object_count_repo.read_values(object_class)
+        else:
+            total_objects = self.__object_count_repo.read_values()
+        return CountTotalResponse(total_objects=total_objects)
+
     def __find_valid_predictions(self, image, threshold):
         predictions = self.__object_detector.predict(image)
-        print("predictions 2", predictions)
         self.__debug_image(image, predictions, "all_predictions.jpg")
         valid_predictions = list(over_threshold(predictions, threshold=threshold))
-        print("valid_predictions",valid_predictions)
         self.__debug_image(image, valid_predictions, f"valid_predictions_with_threshold_{threshold}.jpg")
         return valid_predictions
 

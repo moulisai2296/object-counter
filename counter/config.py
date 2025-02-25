@@ -26,7 +26,6 @@ def prod_count_action() -> CountDetectedObjects:
         mongo_host = os.getenv("MONGO_HOST")
         mongo_port = int(os.getenv("MONGO_PORT"))
         mongo_db = os.getenv("MONGO_DB")
-        print(tfs_host,tfs_port,mongo_host,mongo_port,mongo_db)
         return CountDetectedObjects(TFSObjectDetector(tfs_host, tfs_port, 'rfcn'),
                                     CountMongoDBRepo(host=mongo_host, port=mongo_port, database=mongo_db))
     elif data_store == 'PG':
@@ -42,8 +41,6 @@ def prod_count_action() -> CountDetectedObjects:
 
 def get_count_action() -> CountDetectedObjects:
     env = os.getenv("ENV")
-    print(env)
     #env = os.getenv('ENV', 'dev')
     count_action_fn = f"{env}_count_action"
-    print(count_action_fn)
     return globals()[count_action_fn]()

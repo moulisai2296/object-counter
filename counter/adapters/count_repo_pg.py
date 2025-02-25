@@ -22,7 +22,8 @@ class CountPostgresRepo(ObjectCountRepo):
                 # Create table matching the ObjectCount model
                 cur.execute("""
                     CREATE TABLE IF NOT EXISTS object_counts (
-                        object_class VARCHAR(100) PRIMARY KEY,
+                        id SERIAL PRIMARY KEY,
+                        object_class VARCHAR(100) UNIQUE,
                         count INTEGER NOT NULL DEFAULT 0,
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
@@ -71,8 +72,7 @@ class CountPostgresRepo(ObjectCountRepo):
                     cur.execute("""
                         INSERT INTO object_counts (object_class, count)
                         VALUES (%s, %s)
-                        ON CONFLICT (object_class) DO UPDATE
-                        SET count = EXCLUDED.count,
-                            updated_at = CURRENT_TIMESTAMP
+                        ON CONFLICT (object_class) 
+                        DO UPDATE SET count = object_counts.count + 1, updated_at = CURRENT_TIMESTAMP;
                     """, (value.object_class, value.count))
             conn.commit()
