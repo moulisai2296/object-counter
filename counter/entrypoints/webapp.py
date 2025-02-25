@@ -65,6 +65,39 @@ def create_app():
             return jsonify(count_response)
         except Exception as e:
             return Response("Internal Server Error", status=500)
+    
+    @app.route('/object-count-pg-multiple', methods=['POST'])
+    def object_detection_pg_multiple():
+        """
+        This endpoint accepts an image file and a threshold value via a POST request. 
+        It processes the image to detect objects using a predefined detection model.
+        It uses Postgres to store the metadata.
+        Returns:
+            JSON response containing the detected object count.
+        """
+        try:
+            threshold = float(request.form.get('threshold', 0.5))
+            uploaded_files = request.files.getlist('files')
+
+            if not uploaded_files:
+                return Response("BAD REQUEST", status=400)
+
+            results = {}
+
+            for uploaded_file in uploaded_files:
+                image = BytesIO()
+                uploaded_file.save(image)
+                print(f"Processing {uploaded_file.filename}...")
+                count_response = count_action.execute(image, threshold)
+                list_predictions = jsonify(count_response)
+                data = list_predictions.get_json()
+                current_objects = {"predictions": data.get("current_objects", [])}
+                results[uploaded_file.filename] = current_objects
+            return jsonify(results)
+
+        except Exception as e:
+            print(e)
+            return Response("Internal Server Error", status=500)
 
     @app.route('/')
     def home():

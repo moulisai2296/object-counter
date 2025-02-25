@@ -5,11 +5,11 @@ import pandas as pd
 # Flask API URL
 API_URL = "http://127.0.0.1:5000"
 
-def upload_image(file, threshold, model_name):
+def upload_image(files, threshold, model_name):
     """ Sends image to Flask API for object detection """
-    files = {"file": file}
+    files_data =[("files", (file.name, file, file.type)) for file in files]
     data = {"threshold": threshold, "model_name": model_name}
-    response = requests.post(f"{API_URL}/object-count-pg", files=files, data=data)
+    response = requests.post(f"{API_URL}/object-count-pg-multiple", files=files_data, data=data)
     
     if response.status_code == 200:
         return response.json()
@@ -32,23 +32,35 @@ st.title("Object Detection App")
 tab1, tab2 = st.tabs(["Object Detection", "Total Object Counts"])
 
 with tab1:
-    st.header("Upload an Image for Detection")
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    st.header("Upload Images for Detection")
+    uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     threshold = st.slider("Threshold", 0.1, 1.0, 0.5)
     model_name = st.selectbox("Select Model", ["rfcn"])
 
-    if uploaded_file and st.button("Detect Objects"):
-        result = upload_image(uploaded_file, threshold, model_name)
+    if uploaded_files and st.button("Detect Objects"):
+        results = upload_image(uploaded_files, threshold, model_name)
 
-        if "error" in result:
-            st.error("!!! Failed to process image. Please try again.")
-        elif "predictions" in result and result["predictions"]:
-            st.success("Objects detected!")
-
-            df = pd.DataFrame(result["predictions"])
-            st.table(df)
+        if not results:
+            st.error("!!! Failed to process images. Please try again.")
         else:
-            st.warning("No objects detected in the image.")
+            data_list = []
+            for filename, result in results.items():
+                for obj in result["predictions"]:
+                    data_list.append({
+                        "Filename": filename,
+                        "Object Class": obj["object_class"],
+                        "Count": obj["count"]
+                    })
+            
+            # Convert to DataFrame
+            df = pd.DataFrame(data_list)
+
+            # Display table
+            if not df.empty:
+                st.success("Objects detected!")
+                st.table(df)  # Use st.dataframe(df) for a scrollable table
+            else:
+                st.warning("No objects detected in the uploaded images.")
 
 with tab2:
     st.header("Total Object Counts")

@@ -29,6 +29,6 @@
 2. Improve **error handling** --- Implemented
 3. Implement **Streamlit** as a user-friendly interface for the API. ---- Implemented
 4. Reduce **manual setup effort** for the project. --- Implemeted (Added MAKE file)
-5. Store **model inference metadata** including detection time.
+5. Implement **batch processing** to allow multiple images for object detection. --- Implemented
 6. Introduce **API authentication** using a JWT token. 
-7. Implement **batch processing** to allow multiple images for object detection.
+7. Store **model inference metadata** including detection time.
