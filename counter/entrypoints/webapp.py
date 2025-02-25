@@ -49,6 +49,7 @@ def create_app():
             current_objects = {"predictions": data.get("current_objects", [])}
             return jsonify(current_objects)
         except Exception as e:
+            print(e)
             return Response("Internal Server Error", status=500)
         
     @app.route('/get_object_count', methods=['GET'])

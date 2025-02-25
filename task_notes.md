@@ -25,10 +25,10 @@
 - The code follows **Hexagonal Architecture**.
 
 ### Improvements
-1. Improve **error handling** --- Implemented
-2. Add an **admin endpoint** to provide a holistic view of all detected objects --- Implemented
-3. Implement **batch processing** to allow multiple images for object detection.
-4. Introduce **API authentication** using a JWT token.
-5. Store **model inference metadata**, including detection time.
-6. Reduce **manual setup effort** for the project. 
-7. Implement **Streamlit** as a user-friendly interface for the API.
+1. Add an **admin endpoint** to provide a holistic view of all detected objects --- Implemented
+2. Improve **error handling** --- Implemented
+3. Implement **Streamlit** as a user-friendly interface for the API. ---- Implemented
+4. Reduce **manual setup effort** for the project. --- Implemeted (Added MAKE file)
+5. Store **model inference metadata** including detection time.
+6. Introduce **API authentication** using a JWT token. 
+7. Implement **batch processing** to allow multiple images for object detection.

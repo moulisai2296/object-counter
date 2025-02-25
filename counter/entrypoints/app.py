@@ -35,7 +35,7 @@ with tab1:
     st.header("Upload an Image for Detection")
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     threshold = st.slider("Threshold", 0.1, 1.0, 0.5)
-    model_name = st.selectbox("Select Model", ["rfcn", "faster_rcnn", "ssd"])
+    model_name = st.selectbox("Select Model", ["rfcn"])
 
     if uploaded_file and st.button("Detect Objects"):
         result = upload_image(uploaded_file, threshold, model_name)
