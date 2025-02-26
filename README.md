@@ -17,6 +17,10 @@ The model used in this example has been taken from
 
 
 ## Instructions to configure this project
+Make file command : 
+```make download-model```
+
+Commands in ```make file```
 ```
 # Download the rfcn model 
 wget https://storage.googleapis.com/intel-optimized-tensorflow/models/v1_8/rfcn_resnet101_fp32_coco_pretrained_model.tar.gz
@@ -29,25 +33,26 @@ rm -rf tmp/rfcn_resnet101_coco_2018_01_28
 ```
 
 ## Setup and run Tensorflow Serving
+Make file command : 
+```make serve-tf```
+
+Commands in ```make file```
 
 ```
-
 # For unix systems
 cores_per_socket=`lscpu | grep "Core(s) per socket" | cut -d':' -f2 | xargs`
 num_sockets=`lscpu | grep "Socket(s)" | cut -d':' -f2 | xargs`
 num_physical_cores=$((cores_per_socket * num_sockets))
 
 docker rm -f tfserving
-docker run \
-    --name=tfserving \
-    -p 8500:8500 \
-    -p 8501:8501 \
-    -v "$(pwd)\tmp\model:/models" \
-    -e OMP_NUM_THREADS=$num_physical_cores \
-    -e TENSORFLOW_INTER_OP_PARALLELISM=2 \
-    -e TENSORFLOW_INTRA_OP_PARALLELISM=$num_physical_cores \
-    intel/intel-optimized-tensorflow-serving:2.8.0 \
-    --model_config_file=/models/model_config.config
+sudo docker run -d \
+    	--name=tfserving \
+    	-p 8500:8500 \
+    	-p 8501:8501 \
+    	-v "$(pwd)/tmp/model:/models" \
+    	-e MODEL_NAME=rfcn \
+    	-e MODEL_BASE_PATH=/models \
+    	tensorflow/serving:latest
 
 # For Windows (Powershell)
 $num_physical_cores=(Get-WmiObject Win32_Processor | Select-Object NumberOfCores).NumberOfCores
@@ -68,15 +73,39 @@ docker run `
 
 
 ## Run mongo 
+Make file command : 
+```make setup-mongo```
 
+Commands in ```make file```
 ```bash
 docker rm -f test-mongo
 docker run --name test-mongo --rm -p 27017:27017 -d mongo:latest
 ```
 
+## Run postgres 
+Make file command : 
+```make setup-postgres```
+
+Commands in ```make file```
+
+```bash
+sudo docker rm -f object-counter-pg || true
+sudo docker run -d \
+	--name object-counter-postgres \
+	-e POSTGRES_DB=object_counter \
+	-e POSTGRES_USER=postgres \
+	-e POSTGRES_PASSWORD=postgres \
+	-p 5432:5432 \
+	postgres:14
+```
+
 
 ## Setup virtualenv
 
+Make file command : 
+```make setup-venv```
+
+Commands in ```make file```
 ```bash
 # Python >= 3.0
 python -m venv .venv
@@ -86,7 +115,11 @@ pip install -r requirements.txt
 
 ## Run the application
 
-### Using fakes
+### Using flask
+Make file command : 
+```make run-flask```
+
+Commands in ```make file```
 ```
 python -m counter.entrypoints.webapp
 ```
@@ -104,12 +137,23 @@ python -m counter.entrypoints.webapp
 
 ## Call the service
 
+1. **Manual service calls**
 ```shell script
- curl -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count
- curl -F "threshold=0.9" -F "file=@resources/images/cat.jpg" http://0.0.0.0:5000/object-count
- curl -F "threshold=0.9" -F "file=@resources/images/food.jpg" http://0.0.0.0:5000/object-count 
-```
+ curl -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count-pg
+ curl -F "threshold=0.9" -F "file=@resources/images/cat.jpg" http://0.0.0.0:5000/object-count-pg
+ curl -F "threshold=0.9" -F "file=@resources/images/food.jpg" http://0.0.0.0:5000/object-count-pg
 
+ #To get overall count of objects
+  curl http://0.0.0.0:5000/get_object_count
+  curl http://0.0.0.0:5000/get_object_count?object_class=cat
+```
+2. **WEB APP to call the services**
+- Make file command : 
+```make run-streamlit```
+- Commands in ```make file```
+```
+streamlit run counter/entrypoints/app.py
+```
 ## Run the tests
 
 ```
