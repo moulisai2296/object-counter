@@ -33,7 +33,7 @@ def test_object_detection(client, image_path):
     data['file'] = (image, 'test.jpg')
 
     # Make a test request to the object_detection endpoint
-    response = client.post('/object-count', data = data,
+    response = client.post('/object-count-pg', data = data,
         content_type='multipart/form-data', buffered=True)
 
     # Check that the count_action was called with the correct arguments and

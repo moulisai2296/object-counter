@@ -27,30 +27,6 @@ def create_app():
             return jsonify(count_response)
         except Exception as e:
             return Response("Internal Server Error", status=500)
-
-    @app.route('/object-count-pg', methods=['POST'])
-    def object_detection_pg():
-        """
-        This endpoint accepts an image file and a threshold value via a POST request. 
-        It processes the image to detect objects using a predefined detection model.
-        It uses Postgres to store the metadata.
-        Returns:
-            JSON response containing the detected object count.
-        """
-        try:
-            threshold = float(request.form.get('threshold', 0.5))
-            uploaded_file = request.files['file']
-            image = BytesIO()
-            uploaded_file.save(image)
-            print("********************* PG **************************")
-            count_response = count_action.execute(image, threshold)
-            list_predictions = jsonify(count_response)
-            data = list_predictions.get_json()
-            current_objects = {"predictions": data.get("current_objects", [])}
-            return jsonify(current_objects)
-        except Exception as e:
-            print(e)
-            return Response("Internal Server Error", status=500)
         
     @app.route('/get_object_count', methods=['GET'])
     def get_objects():
@@ -66,10 +42,10 @@ def create_app():
         except Exception as e:
             return Response("Internal Server Error", status=500)
     
-    @app.route('/object-count-pg-multiple', methods=['POST'])
-    def object_detection_pg_multiple():
+    @app.route('/object-count-pg', methods=['POST'])
+    def object_detection_pg():
         """
-        This endpoint accepts an image file and a threshold value via a POST request. 
+        This endpoint accepts an image file/files and a threshold value via a POST request. 
         It processes the image to detect objects using a predefined detection model.
         It uses Postgres to store the metadata.
         Returns:
