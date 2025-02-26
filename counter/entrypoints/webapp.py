@@ -53,7 +53,8 @@ def create_app():
         """
         try:
             threshold = float(request.form.get('threshold', 0.5))
-            uploaded_files = request.files.getlist('files')
+            uploaded_files = request.files.getlist('file')
+            print(uploaded_files)
 
             if not uploaded_files:
                 return Response("BAD REQUEST", status=400)

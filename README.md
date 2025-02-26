@@ -139,9 +139,13 @@ python -m counter.entrypoints.webapp
 
 1. **Manual service calls**
 ```shell script
- curl -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count
- curl -F "threshold=0.9" -F "file=@resources/images/cat.jpg" http://0.0.0.0:5000/object-count
- curl -F "threshold=0.9" -F "file=@resources/images/food.jpg" http://0.0.0.0:5000/object-count 
+ curl -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count-pg
+ curl -F "threshold=0.9" -F "file=@resources/images/cat.jpg" http://0.0.0.0:5000/object-count-pg
+ curl -F "threshold=0.9" -F "file=@resources/images/food.jpg" http://0.0.0.0:5000/object-count-pg
+
+ #To get overall count of objects
+  curl http://0.0.0.0:5000/get_object_count
+  curl http://0.0.0.0:5000/get_object_count?object_class=cat
 ```
 2. **WEB APP to call the services**
 - Make file command : 
