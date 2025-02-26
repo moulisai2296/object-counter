@@ -7,9 +7,9 @@ API_URL = "http://127.0.0.1:5000"
 
 def upload_image(files, threshold, model_name):
     """ Sends image to Flask API for object detection """
-    files_data =[("files", (file.name, file, file.type)) for file in files]
+    files_data =[("file", (file.name, file, file.type)) for file in files]
     data = {"threshold": threshold, "model_name": model_name}
-    response = requests.post(f"{API_URL}/object-count-pg-multiple", files=files_data, data=data)
+    response = requests.post(f"{API_URL}/object-count-pg", files=files_data, data=data)
     
     if response.status_code == 200:
         return response.json()
@@ -39,7 +39,7 @@ with tab1:
 
     if uploaded_files and st.button("Detect Objects"):
         results = upload_image(uploaded_files, threshold, model_name)
-
+        print(results)
         if not results:
             st.error("!!! Failed to process images. Please try again.")
         else:
