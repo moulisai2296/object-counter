@@ -45,14 +45,15 @@
 5. Implement **batch processing** to allow multiple images for object detection.
 6. Introduce **API authentication** using a JWT token. 
 7. Store **model inference metadata** including detection time.
+8. **Logging** can be added.
 
 ## Task 4: Implement proposed Improvements
 
 Implemeted 5 improvements:
-1. **admin endpoint** Provides a holistic view of all detected objects.
-2. **error handling** anf **env files addition**.
-3. **batch processing** Allows multiple images for object detection. 
-4. **manual setup effort** Reduce number of steps involved suring setup 
+1. **Admin Endpoint** Provides a holistic view of all detected objects.
+2. **Error handling** and **env files addition**.
+3. **Batch processing** Allows multiple images for object detection. 
+4. **Manual setup effort** Reduce number of steps involved suring setup 
 5. **Streamlit** as a user-friendly interface for the API.
 
 ## Task 5: Multiple models addition
@@ -80,3 +81,13 @@ tmp/
 2. Implement an adapter for the internally trained model (e.g., TFSObjectDetector), similar to how TensorFlow models are served.
 3. Modify the API to accept model_name as an input parameter.
 4. Based on the provided model name, the API should route the request to the corresponding adapter. The adapter will handle object detection and return the response accordingly.
+
+## Task 6: 
+
+1. **Unit test**: Adjusted one test case to test new endpoint.
+2. **Object detection using different deep learning frameworks** 
+- Since the architecture followed is Hexagonal architecture, Support models for object detection using different deep learning frameworks is easy and efficient.
+- Like Tensorflow serving, there are other deep learning frameworks that are used to detect objects. One of them is Pytorch(YOLOv5).
+- Similar to tensorflow object detector, we need to write a new adapter for the other deep learning framework.
+- Based on the model name, the API can do object detection. It selects the adapter accordingly and infer the results.
+- The model is to be added at the correct location which is tmp/models/<new_model>/1/
